@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Agent Web · 工作空间</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f2f1ed'/%3E%3Cpath d='m8 10 6 6-6 6m9 0h7' fill='none' stroke='%234a4a46' stroke-width='2.5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/vendor/xterm.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/vendor/xterm.js" defer></script>
+  <script src="/vendor/addon-fit.js" defer></script>
+  <script src="/vendor/marked.js" defer></script>
+  <script src="/vendor/purify.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></symbol>
+    <symbol id="i-new" viewBox="0 0 24 24"><path d="M12 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-7M16 3l5 5-10 10-5 1 1-5Z"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9 10 10 0 0 1-4-.9L3 21l.9-5A10 10 0 0 1 3 12a9 9 0 0 1 18 0Z"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3m6 0h4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 19V5m-5 5 5-5 5 5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 17 5-5 4 4 4-6 5 7"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4Z"/></symbol>
+  </defs></svg>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-top"><a class="brand" href="/" aria-label="Agent Web 首页"><svg><use href="#i-code"/></svg><strong>Agent Web</strong></a><button id="sidebar-close" class="icon-button" title="收起侧栏" aria-label="收起侧栏"><svg><use href="#i-panel"/></svg></button></div>
+      <label class="agent-picker-label" for="agent-picker">新会话使用</label><select id="agent-picker" class="agent-picker" aria-label="新会话 agent"><option value="codex">Codex</option></select><button id="new-chat" class="nav-button new-chat"><svg><use href="#i-new"/></svg><span>新建会话</span></button>
+      <div class="nav-section-label">工作空间</div>
+      <button id="workspace-details" class="nav-button workspace-button"><svg><use href="#i-folder"/></svg><span id="workspace-name">当前项目</span><svg class="small"><use href="#i-chevron"/></svg></button>
+      <div id="workspace-popover" class="workspace-popover" hidden><span>工作目录</span><code id="workdir">正在读取…</code><button id="copy-workdir">复制路径</button></div>
+      <div class="nav-section-label conversation-label">会话</div>
+      <div id="session-list" class="session-list" aria-label="会话列表"></div>
+      <div class="sidebar-bottom"><button id="open-terminal" class="nav-button"><svg><use href="#i-terminal"/></svg><span>终端与审批</span><span class="nav-shortcut">↗</span></button><div class="sidebar-divider"></div><div class="local-workspace"><div class="workspace-avatar">C</div><div><strong>本地工作空间</strong><span id="session-state">准备开始</span></div><span class="local-badge">LOCAL</span></div></div>
+    </aside>
+    <main class="main-panel">
+      <header class="chat-header"><div class="header-left"><button id="sidebar-toggle" class="icon-button" aria-label="切换侧栏" title="切换侧栏"><svg><use href="#i-panel"/></svg></button><span id="header-project">当前项目</span><span class="header-slash">/</span><span id="thread-title" class="header-title">新会话</span></div><div class="header-actions"><span id="connection-status" class="connection-status" data-state="offline"><span></span><b>未连接</b></span><button id="connect" class="connect-button">启动并连接</button><button id="close-session" class="close-session-button" disabled>关闭会话</button><button id="terminal-toggle" class="icon-button" aria-label="打开终端" title="打开终端"><svg><use href="#i-terminal"/></svg></button></div></header>
+      <div id="chat-scroll" class="chat-scroll">
+        <section id="welcome" class="welcome"><div class="welcome-icon"><svg><use href="#i-code"/></svg></div><div class="welcome-project"><svg><use href="#i-folder"/></svg><span id="welcome-project">当前项目</span></div><h1>今天想构建什么？</h1><p>从一个想法、一个问题，或一段待完善的代码开始。</p><div class="suggestions"><button data-suggestion="请介绍当前项目的结构和主要功能。"><svg><use href="#i-folder"/></svg><strong>了解这个项目</strong><span>探索结构与主要功能</span></button><button data-suggestion="请检查当前项目，找出值得优先修复的问题。"><svg><use href="#i-check"/></svg><strong>检查代码问题</strong><span>一起找到改进的地方</span></button><button data-suggestion="我想在当前项目中实现一个新功能，请先了解项目。"><svg><use href="#i-spark"/></svg><strong>实现一个功能</strong><span>把想法变成可用的代码</span></button></div></section>
+        <div id="messages" class="messages" role="log" aria-label="对话消息" aria-live="polite"></div>
+        <div id="thinking" class="thinking" hidden><span class="thinking-dot"></span><span id="thinking-text">Agent 正在处理…</span></div>
+      </div>
+      <div class="composer-region"><div id="notice" class="notice" role="status" aria-live="polite" hidden></div><div class="composer"><textarea id="prompt" rows="2" placeholder="向当前 agent 描述你的任务…" aria-label="消息输入框"></textarea><div class="composer-toolbar"><div class="composer-context"><svg><use href="#i-folder"/></svg><span id="composer-project">当前项目</span><span class="context-divider"></span><span id="agent-label" class="model-label">Coding agent</span></div><div class="composer-actions"><button id="stop-generation" class="stop-button" aria-label="停止生成" title="停止生成" hidden><svg><use href="#i-stop"/></svg></button><button id="send-prompt" class="send-button" title="发送消息" aria-label="发送消息" disabled><svg><use href="#i-arrow"/></svg></button></div></div></div><div class="composer-hint"><span>Enter 发送 · Shift + Enter 换行</span><span id="composer-status">准备好后，发送第一条消息</span></div></div>
+    </main>
+  </div>
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <aside id="terminal-drawer" class="terminal-drawer" aria-label="终端与审批" aria-hidden="true"><div class="drawer-header"><div><svg><use href="#i-terminal"/></svg><strong>终端与审批</strong></div><button id="close-terminal" class="icon-button" aria-label="关闭终端"><svg><use href="#i-close"/></svg></button></div><p class="drawer-description">在这里处理 agent 的确认、选项菜单和终端命令。</p><div class="terminal-frame"><div class="terminal-frame-header"><span id="terminal-session-name">codex-web</span><span id="terminal-size">— × —</span></div><div id="terminal" aria-label="Agent 交互式终端"></div><div class="terminal-shortcuts"><button data-key="escape" disabled>Esc</button><button data-key="up" disabled>↑</button><button data-key="down" disabled>↓</button><button data-key="tab" disabled>Tab</button><button data-key="enter" disabled>Enter ↵</button><button data-key="interrupt" disabled>Ctrl C</button></div></div><div class="drawer-controls"><button id="copy-screen" class="secondary-button" disabled><svg><use href="#i-copy"/></svg>复制屏幕</button><button id="disconnect" class="secondary-button" disabled>断开连接</button></div><div class="attach-section"><span>本机终端接管</span><button id="copy-attach"><code id="attach-command">正在读取…</code><svg><use href="#i-copy"/></svg></button></div><button id="end-session" class="end-session" disabled>关闭当前会话</button></aside>
+</body>
+</html>

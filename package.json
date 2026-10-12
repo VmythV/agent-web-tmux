@@ -1,0 +1,27 @@
+{
+  "name": "agent-web-tmux",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "A Rust web console for interactive coding agents, backed by tmux.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "postinstall": "node scripts/vendor.mjs",
+    "start": "node scripts/rust.mjs start",
+    "build": "node scripts/rust.mjs build --release",
+    "check": "node scripts/rust.mjs check && node --check public/app.js",
+    "test": "node scripts/rust.mjs test",
+    "test:browser": "node scripts/rust.mjs build --example browser_fixture && node test/browser-smoke.mjs"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
+    "dompurify": "3.4.17",
+    "marked": "18.1.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.0"
+  }
+}
